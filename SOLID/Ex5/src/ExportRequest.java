@@ -4,6 +4,6 @@ public class ExportRequest {
 
     public ExportRequest(String title, String body) {
         this.title = title;
-        this.body  = body;
+        this.body = body;
     }
 }
