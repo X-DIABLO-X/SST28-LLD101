@@ -22,8 +22,7 @@ public class MetricsLoader {
         }
 
         // BROKEN: should not create a new instance
-        MetricsRegistry registry = new MetricsRegistry();
-
+        MetricsRegistry registry = MetricsRegistry.getInstance();
         for (String key : props.stringPropertyNames()) {
             String raw = props.getProperty(key, "0").trim();
             long v;

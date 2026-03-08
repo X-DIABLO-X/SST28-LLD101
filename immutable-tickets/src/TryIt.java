@@ -16,19 +16,25 @@ public class TryIt {
     public static void main(String[] args) {
         TicketService service = new TicketService();
 
-        IncidentTicket t = service.createTicket("TCK-1001", "reporter@example.com", "Payment failing on checkout");
-        System.out.println("Created: " + t);
+        IncidentTicket originalTicket = service.createTicket("TCK-1001", "reporter@example.com", "Payment failing on checkout");
+        System.out.println("Created: " + originalTicket);
+        IncidentTicket assignedTicket = service.assign(originalTicket, "agent@example.com");
+        IncidentTicket escalatedTicket = service.escalateToCritical(assignedTicket);
+        
+        System.out.println("\n--- Proving State Updates ---");
+        System.out.println("Original Ticket (unchanged) : " + originalTicket);
+        System.out.println("Assigned Ticket             : " + assignedTicket);
+        System.out.println("Escalated Ticket            : " + escalatedTicket);
 
-        // Demonstrate post-creation mutation through service
-        service.assign(t, "agent@example.com");
-        service.escalateToCritical(t);
-        System.out.println("\nAfter service mutations: " + t);
-
-        // Demonstrate external mutation via leaked list reference
-        List<String> tags = t.getTags();
-        tags.add("HACKED_FROM_OUTSIDE");
-        System.out.println("\nAfter external tag mutation: " + t);
-
-        // Starter compiles; after refactor, you should redesign updates to create new objects instead.
+        System.out.println("\n--- Proving Immutability ---");
+        List<String> tags = originalTicket.getTags();
+        try {
+            System.out.println("Attempting to add a tag externally...");
+            tags.add("HACKED_FROM_OUTSIDE");
+        } catch (UnsupportedOperationException e) {
+            System.out.println("Successfully blocked external tag mutation! Caught: " + e.getClass().getSimpleName());
+        }
+        
+        System.out.println("\nFinal original ticket state: " + originalTicket);
     }
 }
